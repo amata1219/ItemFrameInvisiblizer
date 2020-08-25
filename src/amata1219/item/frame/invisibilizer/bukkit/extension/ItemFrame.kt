@@ -1,4 +1,4 @@
-package amata1219.item.frame.invisibilizer.extension
+package amata1219.item.frame.invisibilizer.bukkit.extension
 
 import amata1219.item.frame.invisibilizer.Main
 import org.bukkit.NamespacedKey
