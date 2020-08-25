@@ -10,7 +10,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.EquipmentSlot
 
-class PlayerRightClickItemFrameListener : Listener {
+class InvisiblizingItemFrameListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onPlayerInteract(event: PlayerInteractEntityEvent){

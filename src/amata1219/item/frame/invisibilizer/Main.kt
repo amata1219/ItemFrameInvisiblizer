@@ -1,6 +1,6 @@
 package amata1219.item.frame.invisibilizer
 
-import amata1219.item.frame.invisibilizer.listener.PlayerRightClickItemFrameListener
+import amata1219.item.frame.invisibilizer.listener.InvisiblizingItemFrameListener
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -15,7 +15,7 @@ class Main : JavaPlugin(), Listener {
 
     override fun onEnable() {
         INSTANCE = this
-        server.pluginManager.registerEvents(PlayerRightClickItemFrameListener(), this)
+        server.pluginManager.registerEvents(InvisiblizingItemFrameListener(), this)
     }
 
     override fun onDisable() {

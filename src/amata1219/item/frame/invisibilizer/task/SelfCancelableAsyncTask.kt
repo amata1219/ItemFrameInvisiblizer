@@ -1,4 +1,4 @@
-package amata1219.item.frame.invisibilizer.bukkit
+package amata1219.item.frame.invisibilizer.task
 
 import amata1219.item.frame.invisibilizer.Main
 import org.bukkit.Bukkit
@@ -6,7 +6,7 @@ import org.bukkit.scheduler.BukkitTask
 
 abstract class SelfCancelableAsyncTask : Runnable {
 
-    private lateinit var self: BukkitTask
+    lateinit var self: BukkitTask
 
     private var ticks: Long = 0
 
