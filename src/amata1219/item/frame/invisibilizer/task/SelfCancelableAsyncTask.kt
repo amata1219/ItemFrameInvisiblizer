@@ -8,8 +8,6 @@ abstract class SelfCancelableAsyncTask : Runnable {
 
     lateinit var self: BukkitTask
 
-    private var ticks: Long = 0
-
     abstract fun process(self: BukkitTask)
 
     override fun run() {

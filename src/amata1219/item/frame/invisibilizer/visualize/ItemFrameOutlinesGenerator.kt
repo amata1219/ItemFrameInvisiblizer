@@ -6,6 +6,7 @@ import org.bukkit.entity.ItemFrame
 import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 import java.awt.color.ColorSpace
+import kotlin.reflect.KFunction1
 
 object ItemFrameOutlinesGenerator {
 
@@ -30,12 +31,14 @@ object ItemFrameOutlinesGenerator {
     fun generateOutlinesVectors(frame: ItemFrame): List<Vector> {
         val min: Vector = frame.boundingBox.min
         val max: Vector = frame.boundingBox.max
-        return generateLocationsOfEvenlySpacedPoints(min, max, Vector::getX) {
-            vector, element -> vector.setX(element)
-        } + generateLocationsOfEvenlySpacedPoints(min, max, Vector::getY) {
-            vector, element -> vector.setY(element)
-        } + generateLocationsOfEvenlySpacedPoints(min, max, Vector::getZ) {
-            vector, element -> vector.setZ(element)
+        return sequenceOf<Pair<KFunction1<Vector, Double>, (Vector, Double) -> Vector>>(
+                Vector::getX to { v, e -> v.setX(e)},
+                Vector::getY to { v, e -> v.setY(e)},
+                Vector::getZ to { v, e -> v.setZ(e)}
+        ).map {
+            generateLocationsOfEvenlySpacedPoints(min, max, it.first, it.second)
+        }.reduce { l1, l2 ->
+            l1 + l2
         }
     }
 
