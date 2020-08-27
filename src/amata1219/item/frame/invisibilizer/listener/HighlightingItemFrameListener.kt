@@ -1,30 +1,26 @@
 package amata1219.item.frame.invisibilizer.listener
 
-import amata1219.item.frame.invisibilizer.task.HighlightingItemFramesAroundPlayerTask
-import amata1219.item.frame.invisibilizer.task.SelfCancelableAsyncTask
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.hanging.HangingBreakEvent
+import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-class HighlightingItemFrameListener : Listener {
-
-    val highlightersToTasks = mutableMapOf<Player, SelfCancelableAsyncTask>()
-
+object HighlightingItemFrameListener : Listener {
 
     @EventHandler
     fun onPlayerLeave(event: PlayerQuitEvent) {
-        event.player.stopHighlightingItemFramesAround()
+
     }
 
-    private fun Player.startHighlightingItemFramesAround() {
-        HighlightingItemFramesAroundPlayerTask(this, 0)
-                .executeTaskTimer(0, 0)
+    @EventHandler
+    fun onItemFramePlace(event: HangingPlaceEvent) {
+
     }
 
-    private fun Player.stopHighlightingItemFramesAround() {
-        highlightersToTasks.remove(this)?.self?.cancel()
-    }
+    @EventHandler
+    fun onItemFrameBreak(event: HangingBreakEvent) {
 
+    }
 
 }

@@ -1,4 +1,4 @@
-package amata1219.item.frame.invisibilizer.task
+package amata1219.item.frame.invisibilizer.visualize.task
 
 import amata1219.item.frame.invisibilizer.Main
 import org.bukkit.Bukkit

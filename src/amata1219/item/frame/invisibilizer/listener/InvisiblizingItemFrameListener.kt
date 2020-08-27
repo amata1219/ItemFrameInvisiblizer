@@ -1,8 +1,8 @@
 package amata1219.item.frame.invisibilizer.listener
 
-import amata1219.item.frame.invisibilizer.bukkit.extension.invisibilize
-import amata1219.item.frame.invisibilizer.bukkit.extension.isInvisible
-import amata1219.item.frame.invisibilizer.bukkit.extension.visibilize
+import amata1219.item.frame.invisibilizer.extension.bukkit.invisibilize
+import amata1219.item.frame.invisibilizer.extension.bukkit.isInvisible
+import amata1219.item.frame.invisibilizer.extension.bukkit.visibilize
 import org.bukkit.entity.ItemFrame
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
