@@ -1,5 +1,6 @@
 package amata1219.item.frame.invisibilizer
 
+import amata1219.item.frame.invisibilizer.listener.HighlightingItemFrameListener
 import amata1219.item.frame.invisibilizer.listener.InvisiblizingItemFrameListener
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
@@ -11,11 +12,20 @@ class Main : JavaPlugin(), Listener {
 
         lateinit var INSTANCE: Main
 
+        val radiusOfArea2HighlightItemFrames: Double
+            get() = INSTANCE.config.getDouble("The radius of the area to highlight item frames")
+
     }
 
     override fun onEnable() {
         INSTANCE = this
-        server.pluginManager.registerEvents(InvisiblizingItemFrameListener(), this)
+
+        listOf(
+                InvisiblizingItemFrameListener,
+                HighlightingItemFrameListener
+        ).forEach {
+            server.pluginManager.registerEvents(it, this)
+        }
     }
 
     override fun onDisable() {
