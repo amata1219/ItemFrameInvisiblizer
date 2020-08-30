@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.entity.ItemFrame
 import org.bukkit.persistence.PersistentDataType.*
+import org.jooq.tools.reflect.Reflect
 
 private val INVISIBLE_KEY = NamespacedKey(Main.INSTANCE, "invisible")
 
@@ -14,6 +15,14 @@ val ItemFrame.isInvisible: Boolean
 val ItemFrame.attachedBlock: Block
     get() = location.block.getRelative(attachedFace)
 
-fun ItemFrame.invisibilize() = persistentDataContainer.set(INVISIBLE_KEY, BYTE, 1.toByte())
+fun ItemFrame.invisibilize() {
+    Reflect.on(this)
+            .call("getHandle")
+            .call("setInvisible", true)
+}
 
-fun ItemFrame.visibilize() = persistentDataContainer.remove(INVISIBLE_KEY)
+fun ItemFrame.visibilize() {
+    Reflect.on(this)
+            .call("getHandle")
+            .call("setInvisible", false)
+}

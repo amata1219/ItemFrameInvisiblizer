@@ -23,12 +23,13 @@ private val basicMagmaCube4Highlighting: Any = Reflect.onClass("${NMS}.EntityMag
         Reflect.onClass("${NMS}.EntityTypes").field("MAGMA_CUBE").get(),
         Reflect.on(Bukkit.getWorld("world")).call("getHandle").get()
 )
-        .call("setSize", 1, false)
+        .call("setSize", 2, false)
         .call("setNoGravity", true)
         .call("setNoAI", true)
+        .set("glowing", true)
         .call("setFlag", 5, true) //invisibilize
         .call("setFlag", 6, true) //glow
-        //it.set("isInvulnerable, true)
+        .call("setInvulnerable", true)
         .get()
 
 internal fun createMagmaCube4Highlighting(world: World, loc: Location): Pair<Int, Any> {
@@ -36,7 +37,7 @@ internal fun createMagmaCube4Highlighting(world: World, loc: Location): Pair<Int
             .field("entityCount")
             .call("incrementAndGet")
             .get()
-    //loc.add(0.5, 0.5, 0.5)
+    loc.add(0.5, 0.0, 0.5)
     return entityId to Reflect.on(basicMagmaCube4Highlighting)
             .set(
                     "id",
@@ -72,14 +73,13 @@ internal fun Player.startHighlightingItemFrames() {
             Reflect.onClass("${NMS}.PacketPlayOutScoreboardTeam").create()
                     .set("a", nameOfTeam4Highlighting) //teamName = IFI:Xx12
                     .set("i", 0) //teamAction = 0(CREATE)
-                    .set("e", "pushOwnTeam") //collisionRule = pushOwnTeam
+                    .set("f", "never") //collisionRule = pushOwnTeam
                     .set("h", listOf(name)) //members = listOf(playerName)
                     .get()
     )
     val task: BukkitTask = runTaskTimer(0, Main.updateIntervalOfHighlighterTask) {
         unhighlightItemFramesOutOfArea()
         highlightItemFramesInArea()
-        println("run Task! ${Main.updateIntervalOfHighlighterTask}")
     }
     highlighters2ActiveTasks[this] = task
 }
@@ -108,9 +108,19 @@ internal fun Player.highlight(target: ItemFrame) {
                     .get()
     )
     receive(
+            Reflect.onClass("${NMS}.PacketPlayOutEntityMetadata").create(
+                    entityId,
+                    Reflect.on(magmaCube)
+                            .call("getDataWatcher")
+                            .get(),
+                    true
+            ).get()
+    )
+    receive(
             Reflect.onClass("${NMS}.PacketPlayOutScoreboardTeam").create()
                     .set("a", nameOfTeam4Highlighting) //teamName = IFI:Xx12
-                    .set("i", 0) //teamAction = 3(JOIN)
+                    .set("i", 3) //teamAction = 3(JOIN)
+                    .set("f", "never")
                     .set("h", listOf(
                             (Reflect.on(magmaCube)
                                     .field("uniqueID")
@@ -151,7 +161,7 @@ internal fun Player.unhighlightAllItemFrames() {
 }
 
 internal val Player.nameOfTeam4Highlighting: String
-    get() = "IFI:${uniqueId.toString().substring(0, 11)}"
+    get() = "IFIT${uniqueId.toString().substring(0, 12)}"
 
 private fun Player.receive(packet: Any) {
     Reflect.on(this)
