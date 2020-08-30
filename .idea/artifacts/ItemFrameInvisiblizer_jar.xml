@@ -3,12 +3,10 @@
     <output-path>$USER_HOME$/Desktop/Servers/Spigot 1.16.1/plugins</output-path>
     <root id="archive" name="ItemFrameInvisiblizer.jar">
       <element id="module-output" name="ItemFrameInvisiblizer" />
-      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-reflect.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-test.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk7.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk8.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/config.yml" />
+      <element id="extracted-dir" path="$APPLICATION_PLUGINS_DIR$/Kotlin/lib/kotlin-stdlib.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/Plugins/Library/jooq-3.13.4.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
