@@ -18,6 +18,7 @@ object InvisiblizingItemFrameListener : Listener {
         val frame = event.rightClicked as? ItemFrame ?: return
         if (frame.isInvisible) frame.visibilize()
         else frame.invisibilize()
+        event.isCancelled = true
     }
 
 }

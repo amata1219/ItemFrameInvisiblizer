@@ -14,12 +14,13 @@ import org.bukkit.event.hanging.HangingBreakEvent
 import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 
 object HighlightingItemFrameListener : Listener {
 
     @EventHandler
-    fun onPlayerItemHeld(event: PlayerItemHeldEvent) {
+    fun on(event: PlayerItemHeldEvent) {
         val player: Player = event.player
         val prevIsItemFrame: Boolean = event.previousItem?.type == Material.ITEM_FRAME
         val newIsItemFrame: Boolean = event.newItem?.type == Material.ITEM_FRAME
@@ -28,6 +29,11 @@ object HighlightingItemFrameListener : Listener {
         }else if(prevIsItemFrame && !newIsItemFrame) {
             player.stopHighlightingItemFrames()
         }
+    }
+
+    @EventHandler
+    fun on(event: PlayerSwapHandItemsEvent) {
+
     }
 
     private val PlayerItemHeldEvent.previousItem: ItemStack?
