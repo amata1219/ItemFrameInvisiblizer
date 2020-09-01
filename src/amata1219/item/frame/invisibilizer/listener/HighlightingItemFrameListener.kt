@@ -49,7 +49,9 @@ object HighlightingItemFrameListener : Listener {
         val player: Player = event.player
         val isHoldingItemFrameInMainHand: Boolean = isItemFrame(event.mainHandItem)
         val isHoldingItemFrameInOffHand: Boolean = isItemFrame(event.offHandItem)
-
+        println("on:")
+        println("$isHoldingItemFrameInMainHand")
+        println("$isHoldingItemFrameInOffHand")
         if (!isHoldingItemFrameInMainHand && isHoldingItemFrameInOffHand)
             player.startHighlightingItemFrames()
         else if (isHoldingItemFrameInMainHand && !isHoldingItemFrameInOffHand)
@@ -59,10 +61,10 @@ object HighlightingItemFrameListener : Listener {
     private fun isItemFrame(item: ItemStack?) = item?.type == Material.ITEM_FRAME
 
     @EventHandler
-    fun onPlayerLeave(event: PlayerQuitEvent) = event.player.stopHighlightingItemFrames()
+    fun on(event: PlayerQuitEvent) = event.player.stopHighlightingItemFrames()
 
     @EventHandler
-    fun onItemFramePlace(event: HangingPlaceEvent) {
+    fun on(event: HangingPlaceEvent) {
         val frame: ItemFrame = event.entity as? ItemFrame ?: return
         highlighters.filter {
             it.world == frame.world
@@ -74,7 +76,7 @@ object HighlightingItemFrameListener : Listener {
     }
 
     @EventHandler
-    fun onItemFrameBreak(event: HangingBreakEvent) {
+    fun on(event: HangingBreakEvent) {
         val frame: ItemFrame = event.entity as? ItemFrame ?: return
         highlighters.forEach {
             it.unhighlight(frame)
