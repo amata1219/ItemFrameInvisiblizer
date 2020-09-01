@@ -94,25 +94,29 @@ internal fun Player.stopHighlightingItemFrames() {
 
 internal fun Player.highlight(vararg targets: ItemFrame) {
     val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this]!!
-    val frames2Cubes = targets.filterNot(state::containsKey)
-            .map {
-                val result = createMagmaCube4Highlighting(world, it.attachedBlock.location.add(0.5, 0.0, 0.5))
-                return@map Triple(it, result.first, result.second)
-            }
+    val frameUniqueIds = mutableListOf<UUID>()
 
-    frames2Cubes.forEach { (frame, entityId, cube) ->
-        state[frame] = entityId
+    for(target: ItemFrame in targets) {
+        if (state.containsKey(target)) continue
+
+        val (entityId, magmaCube) = createMagmaCube4Highlighting(world, target.attachedBlock.location)
+        state[target] = entityId
+
+        val uuid: UUID = Reflect.on(magmaCube)
+                .field("uniqueID")
+                .get()
+        frameUniqueIds.add(uuid)
 
         receive(
                 Reflect.onClass("${NMS}.PacketPlayOutSpawnEntityLiving")
-                        .create(cube)
+                        .create(magmaCube)
                         .get()
         )
 
         receive(
                 Reflect.onClass("${NMS}.PacketPlayOutEntityMetadata").create(
                         entityId,
-                        Reflect.on(cube)
+                        Reflect.on(magmaCube)
                                 .call("getDataWatcher")
                                 .get(),
                         true
@@ -120,16 +124,12 @@ internal fun Player.highlight(vararg targets: ItemFrame) {
         )
     }
 
-    val cubeUniqueIds: List<String> = frames2Cubes.map {
-        Reflect.on(it.third).get<UUID>("uniqueID").toString()
-    }
-
     receive(
             Reflect.onClass("${NMS}.PacketPlayOutScoreboardTeam").create()
                     .set("a", nameOfTeam4Highlighting) //teamName = IFI:Xx12
                     .set("i", 3) //teamAction = 3(JOIN)
                     .set("f", "never")
-                    .set("h", cubeUniqueIds) //members = listOf(magmaCubeUniqueId)
+                    .set("h", frameUniqueIds.map { it::toString }) //members = listOf(magmaCubeUniqueId)
                     .get()
     )
 }
