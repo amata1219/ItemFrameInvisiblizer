@@ -1,10 +1,7 @@
 package amata1219.item.frame.invisibilizer.extension.bukkit
 
-import amata1219.item.frame.invisibilizer.Main
 import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.reflection.MinecraftPackage.*
-import net.minecraft.server.v1_16_R1.EntityLiving
-import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
