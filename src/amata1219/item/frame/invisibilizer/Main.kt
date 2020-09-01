@@ -3,8 +3,7 @@ package amata1219.item.frame.invisibilizer
 import amata1219.item.frame.invisibilizer.extension.bukkit.highlighters
 import amata1219.item.frame.invisibilizer.extension.bukkit.stopHighlightingItemFrames
 import amata1219.item.frame.invisibilizer.listener.HighlightingItemFrameListener
-import amata1219.item.frame.invisibilizer.listener.InvisiblizingItemFrameListener
-import amata1219.item.frame.invisibilizer.reflection.MinecraftPackage
+import amata1219.item.frame.invisibilizer.listener.InvisibilizingItemFrameListener
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
@@ -16,12 +15,6 @@ class Main : JavaPlugin(), Listener {
 
         lateinit var INSTANCE: Main
 
-        val updateIntervalOfHighlighterTask: Long
-            get() = INSTANCE.config.getLong("The update interval of the highlighter task in seconds") * 20
-
-        val radiusOfArea2HighlightItemFrames: Double
-            get() = INSTANCE.config.getDouble("The radius of the area to highlight item frames")
-
     }
 
     override fun onEnable() {
@@ -30,7 +23,7 @@ class Main : JavaPlugin(), Listener {
         saveDefaultConfig()
 
         listOf(
-                InvisiblizingItemFrameListener,
+                InvisibilizingItemFrameListener,
                 HighlightingItemFrameListener
         ).forEach {
             server.pluginManager.registerEvents(it, this)

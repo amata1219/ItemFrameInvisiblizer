@@ -1,2 +1,4 @@
+'The tip that displays when a player held a item frame in them main hand': "&b額縁はShift＋右クリックで透明にすることができます！"
+'The tip that displays when a player invisibilized a item frame': "&b額縁をオフハンドに持つと透明額縁の場所がわかります。Shift＋左クリックで透明化を解除できます。"
 'The update interval of the highlighter task in seconds': 10
 'The radius of the area to highlight item frames': 24

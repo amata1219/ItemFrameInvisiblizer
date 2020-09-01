@@ -1,6 +1,7 @@
 package amata1219.item.frame.invisibilizer.extension.bukkit
 
 import amata1219.item.frame.invisibilizer.Main
+import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.reflection.MinecraftPackage.*
 import net.minecraft.server.v1_16_R1.EntityLiving
 import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy
@@ -32,16 +33,14 @@ private val basicMagmaCube4Highlighting: Any = Reflect.onClass("${NMS}.EntityMag
         .call("setInvulnerable", true)
         .get()
 
-internal fun createMagmaCube4Highlighting(world: World, loc: Location): Pair<Int, Any> {
-    val entityId: Int = Reflect.onClass("${NMS}.Entity")
-            .field("entityCount")
-            .call("incrementAndGet")
-            .get()
-    loc.add(0.5, 0.0, 0.5)
-    return entityId to Reflect.on(basicMagmaCube4Highlighting)
+internal fun createMagmaCube4Highlighting(world: World, loc: Location): Any {
+    return Reflect.on(basicMagmaCube4Highlighting)
             .set(
                     "id",
-                    entityId
+                    Reflect.onClass("${NMS}.Entity")
+                            .field("entityCount")
+                            .call("incrementAndGet")
+                            .get()
             ).set(
                     "uniqueID",
                     UUID.randomUUID()
@@ -77,7 +76,7 @@ internal fun Player.startHighlightingItemFrames() {
                     .set("h", listOf(name)) //members = listOf(playerName)
                     .get()
     )
-    val task: BukkitTask = runTaskTimer(0, Main.updateIntervalOfHighlighterTask) {
+    val task: BukkitTask = runTaskTimer(0, MainConfig.updateIntervalOfHighlighterTask) {
         unhighlightItemFramesOutOfArea()
         highlightItemFramesInArea()
     }
@@ -97,45 +96,55 @@ internal fun Player.stopHighlightingItemFrames() {
     )
 }
 
-internal fun Player.highlight(target: ItemFrame) {
+internal fun Player.highlight(vararg targets: ItemFrame) {
     val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this]!!
-    if (state.containsKey(target)) return
-    val (entityId, magmaCube) = createMagmaCube4Highlighting(world, target.attachedBlock.location)
-    state[target] = entityId
-    receive(
-            Reflect.onClass("${NMS}.PacketPlayOutSpawnEntityLiving")
-                    .create(magmaCube)
-                    .get()
-    )
-    receive(
-            Reflect.onClass("${NMS}.PacketPlayOutEntityMetadata").create(
-                    entityId,
-                    Reflect.on(magmaCube)
-                            .call("getDataWatcher")
-                            .get(),
-                    true
-            ).get()
-    )
+    val frames2Cubes = targets.filter(state::containsKey)
+            .map {
+                it to createMagmaCube4Highlighting(world, it.attachedBlock.location.add(0.5, 0.0, 0.5))
+            }
+    frames2Cubes.forEach { (frame, cube) ->
+        val entityId: Int = Reflect.on(cube).get("id")
+        state[frame] = entityId
+
+        receive(
+                Reflect.onClass("${NMS}.PacketPlayOutSpawnEntityLiving")
+                        .create(cube)
+                        .get()
+        )
+
+        receive(
+                Reflect.onClass("${NMS}.PacketPlayOutEntityMetadata").create(
+                        entityId,
+                        Reflect.on(cube)
+                                .call("getDataWatcher")
+                                .get(),
+                        true
+                ).get()
+        )
+    }
+
+    val cubeUniqueIds: List<String> = frames2Cubes.map {
+        it.second
+    }.map {
+        Reflect.on(it).get<UUID>().toString()
+    }
+
     receive(
             Reflect.onClass("${NMS}.PacketPlayOutScoreboardTeam").create()
                     .set("a", nameOfTeam4Highlighting) //teamName = IFI:Xx12
                     .set("i", 3) //teamAction = 3(JOIN)
                     .set("f", "never")
-                    .set("h", listOf(
-                            (Reflect.on(magmaCube)
-                                    .field("uniqueID")
-                                    .get() as UUID)
-                                    .toString()
-                    )) //members = listOf(magmaCubeUniqueId)
+                    .set("h", cubeUniqueIds) //members = listOf(magmaCubeUniqueId)
                     .get()
     )
 }
 
 internal fun Player.highlightItemFramesInArea() {
-    val radius: Double = Main.radiusOfArea2HighlightItemFrames
-    getNearbyEntities(radius, radius, radius)
+    val radius: Double = MainConfig.radiusOfArea2HighlightItemFrames
+    val frames: Array<ItemFrame> = getNearbyEntities(radius, radius, radius)
             .filterIsInstance(ItemFrame::class.java)
-            .forEach(::highlight)
+            .toTypedArray()
+    highlight(*frames)
 }
 
 internal fun Player.unhighlight(vararg targets: ItemFrame) {
@@ -149,7 +158,7 @@ internal fun Player.unhighlight(vararg targets: ItemFrame) {
 internal fun Player.unhighlightItemFramesOutOfArea() {
     val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this] ?: return
     val targets: Array<ItemFrame> = state.keys.filter {
-        it.location.distance(location) > Main.radiusOfArea2HighlightItemFrames
+        it.location.distance(location) > MainConfig.radiusOfArea2HighlightItemFrames
     }.toTypedArray()
     if (targets.isNotEmpty()) unhighlight(*targets)
 }
@@ -161,7 +170,7 @@ internal fun Player.unhighlightAllItemFrames() {
 }
 
 internal val Player.nameOfTeam4Highlighting: String
-    get() = "IFIT${uniqueId.toString().substring(0, 12)}"
+    get() = "IFI-${uniqueId.toString().substring(0, 12)}"
 
 private fun Player.receive(packet: Any) {
     Reflect.on(this)
