@@ -49,9 +49,7 @@ object HighlightingItemFrameListener : Listener {
         val player: Player = event.player
         val isHoldingItemFrameInMainHand: Boolean = isItemFrame(event.mainHandItem)
         val isHoldingItemFrameInOffHand: Boolean = isItemFrame(event.offHandItem)
-        println("on:")
-        println("$isHoldingItemFrameInMainHand")
-        println("$isHoldingItemFrameInOffHand")
+
         if (!isHoldingItemFrameInMainHand && isHoldingItemFrameInOffHand)
             player.startHighlightingItemFrames()
         else if (isHoldingItemFrameInMainHand && !isHoldingItemFrameInOffHand)

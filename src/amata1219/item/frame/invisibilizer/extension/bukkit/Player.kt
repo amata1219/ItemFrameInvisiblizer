@@ -2,6 +2,7 @@ package amata1219.item.frame.invisibilizer.extension.bukkit
 
 import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.reflection.MinecraftPackage.*
+import net.minecraft.server.v1_16_R1.Entity
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -30,15 +31,13 @@ private val basicMagmaCube4Highlighting: Any = Reflect.onClass("${NMS}.EntityMag
         .call("setInvulnerable", true)
         .get()
 
-internal fun createMagmaCube4Highlighting(world: World, loc: Location): Any {
-    return Reflect.on(basicMagmaCube4Highlighting)
+internal fun createMagmaCube4Highlighting(world: World, loc: Location): Pair<Int, Any> {
+    val entityId: Int = Reflect.onClass("${NMS}.Entity")
+            .field("entityCount")
+            .call("incrementAndGet")
+            .get()
+    return entityId to Reflect.on(basicMagmaCube4Highlighting)
             .set(
-                    "id",
-                    Reflect.onClass("${NMS}.Entity")
-                            .field("entityCount")
-                            .call("incrementAndGet")
-                            .get()
-            ).set(
                     "uniqueID",
                     UUID.randomUUID()
             ).set(
@@ -95,12 +94,13 @@ internal fun Player.stopHighlightingItemFrames() {
 
 internal fun Player.highlight(vararg targets: ItemFrame) {
     val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this]!!
-    val frames2Cubes = targets.filter(state::containsKey)
+    val frames2Cubes = targets.filterNot(state::containsKey)
             .map {
-                it to createMagmaCube4Highlighting(world, it.attachedBlock.location.add(0.5, 0.0, 0.5))
+                val result = createMagmaCube4Highlighting(world, it.attachedBlock.location.add(0.5, 0.0, 0.5))
+                return@map Triple(it, result.first, result.second)
             }
-    frames2Cubes.forEach { (frame, cube) ->
-        val entityId: Int = Reflect.on(cube).get("id")
+
+    frames2Cubes.forEach { (frame, entityId, cube) ->
         state[frame] = entityId
 
         receive(
@@ -121,9 +121,7 @@ internal fun Player.highlight(vararg targets: ItemFrame) {
     }
 
     val cubeUniqueIds: List<String> = frames2Cubes.map {
-        it.second
-    }.map {
-        Reflect.on(it).get<UUID>().toString()
+        Reflect.on(it.third).get<UUID>("uniqueID").toString()
     }
 
     receive(
