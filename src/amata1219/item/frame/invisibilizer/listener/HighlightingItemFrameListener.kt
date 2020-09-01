@@ -62,28 +62,28 @@ object HighlightingItemFrameListener : Listener {
         }
     }
 
-    private fun isItemFrame(val item: ItemStack?) = item?.type == Material.ITEM_FRAME
+    private fun isItemFrame(item: ItemStack?) = item?.type == Material.ITEM_FRAME
 
     @EventHandler
     fun onPlayerLeave(event: PlayerQuitEvent) = event.player.stopHighlightingItemFrames()
 
     @EventHandler
     fun onItemFramePlace(event: HangingPlaceEvent) {
-        val hanging: Entity = event.entity
-        if (hanging !is ItemFrame) return
+        val frame: ItemFrame = event.entity as? ItemFrame ?: return
         highlighters.filter {
-            it.location.distance(hanging.location) < MainConfig.radiusOfArea2HighlightItemFrames
+            it.world == frame.world
+        }.filter {
+            it.location.distance(frame.location) < MainConfig.radiusOfArea2HighlightItemFrames
         }.forEach {
-            it.highlight(hanging)
+            it.highlight(frame)
         }
     }
 
     @EventHandler
     fun onItemFrameBreak(event: HangingBreakEvent) {
-        val hanging: Entity = event.entity
-        if (hanging !is ItemFrame) return
+        val frame: ItemFrame = event.entity as? ItemFrame ?: return
         highlighters.forEach {
-            it.unhighlight(hanging)
+            it.unhighlight(frame)
         }
     }
 
