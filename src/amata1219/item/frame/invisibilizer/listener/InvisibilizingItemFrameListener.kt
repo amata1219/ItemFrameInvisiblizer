@@ -1,23 +1,39 @@
 package amata1219.item.frame.invisibilizer.listener
 
+import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.extension.bukkit.invisibilize
 import amata1219.item.frame.invisibilizer.extension.bukkit.isInvisible
 import amata1219.item.frame.invisibilizer.extension.bukkit.visibilize
 import org.bukkit.entity.ItemFrame
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.inventory.EquipmentSlot
+import java.util.*
 
 object InvisibilizingItemFrameListener : Listener {
 
+    private val playersWhoHaveAlreadyFlaggedAboutTip4Highlighting = mutableSetOf<UUID>()
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onPlayerInteract(event: PlayerInteractEntityEvent){
-        if (!(event.player.isSneaking && event.hand == EquipmentSlot.HAND)) return
+        val player: Player = event.player
+
+        if (!(player.isSneaking && event.hand == EquipmentSlot.HAND)) return
         val frame = event.rightClicked as? ItemFrame ?: return
-        if (frame.isInvisible) frame.visibilize()
-        else frame.invisibilize()
+
+        if (frame.isInvisible) {
+            frame.visibilize()
+        } else {
+            frame.invisibilize()
+            val uuid = player.uniqueId
+            if (!playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.contains(uuid)) {
+                player.sendMessage(MainConfig.tip4HighlightingItemFrames)
+                playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.add(uuid)
+            }
+        }
         event.isCancelled = true
     }
 

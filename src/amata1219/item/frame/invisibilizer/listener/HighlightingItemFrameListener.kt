@@ -21,7 +21,6 @@ import java.util.*
 object HighlightingItemFrameListener : Listener {
 
     private val playersWhoHaveAlreadyFlaggedAboutTip4Invisibilizing = mutableSetOf<UUID>()
-    private val playersWhoHaveAlreadyFlaggedAboutTip4Highlighting = mutableSetOf<UUID>()
 
     @EventHandler
     fun on(event: PlayerItemHeldEvent) {
@@ -51,15 +50,10 @@ object HighlightingItemFrameListener : Listener {
         val isHoldingItemFrameInMainHand: Boolean = isItemFrame(event.mainHandItem)
         val isHoldingItemFrameInOffHand: Boolean = isItemFrame(event.offHandItem)
 
-        if (!isHoldingItemFrameInMainHand && isHoldingItemFrameInOffHand) {
+        if (!isHoldingItemFrameInMainHand && isHoldingItemFrameInOffHand)
             player.startHighlightingItemFrames()
-            val uuid = player.uniqueId
-            if (playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.contains(uuid)) return
-            player.sendMessage(MainConfig.tip4HighlightingItemFrames)
-            playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.add(uuid)
-        } else if (isHoldingItemFrameInMainHand && !isHoldingItemFrameInOffHand) {
+        else if (isHoldingItemFrameInMainHand && !isHoldingItemFrameInOffHand)
             player.stopHighlightingItemFrames()
-        }
     }
 
     private fun isItemFrame(item: ItemStack?) = item?.type == Material.ITEM_FRAME
