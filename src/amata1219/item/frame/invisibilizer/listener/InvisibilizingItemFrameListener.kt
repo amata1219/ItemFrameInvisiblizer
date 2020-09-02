@@ -36,10 +36,10 @@ object InvisibilizingItemFrameListener : Listener {
 
         if (frame.isInvisible) {
             frame.visibilize()
-            player.actionbar("${ChatColor.AQUA}クリックした額縁を透明化しました！")
+            player.actionbar("${ChatColor.AQUA}右クリックした額縁を可視化しました！")
         } else {
             frame.invisibilize()
-            player.actionbar("${ChatColor.AQUA}クリックした額縁を可視化しました！")
+            player.actionbar("${ChatColor.AQUA}右クリックした額縁を透明化しました！")
             val uuid = player.uniqueId
             if (!playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.contains(uuid)) {
                 player.sendMessage(MainConfig.tip4HighlightingItemFrames)

@@ -5,7 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration
 
 object MainConfig {
 
-    private val file: FileConfiguration = Main.INSTANCE.config
+    private val file: FileConfiguration
+            get() = Main.INSTANCE.config
 
     val tip4InvisibilizingItemFrames: String
         get() = ChatColor.translateAlternateColorCodes(
