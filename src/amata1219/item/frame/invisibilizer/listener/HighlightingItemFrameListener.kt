@@ -2,7 +2,6 @@ package amata1219.item.frame.invisibilizer.listener
 
 import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.extension.bukkit.*
-import amata1219.item.frame.invisibilizer.extension.bukkit.highlight
 import amata1219.item.frame.invisibilizer.extension.bukkit.highlighters
 import amata1219.item.frame.invisibilizer.extension.bukkit.stopHighlightingItemFrames
 import amata1219.item.frame.invisibilizer.extension.bukkit.unhighlight
@@ -69,7 +68,7 @@ object HighlightingItemFrameListener : Listener {
         }.filter {
             it.location.distance(frame.location) < MainConfig.radiusOfArea2HighlightItemFrames
         }.forEach {
-            it.highlight(frame)
+            it.highlightAll(frame)
         }
     }
 

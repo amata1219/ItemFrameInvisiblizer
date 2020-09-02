@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.EquipmentSlot.*
 import java.util.*
 
 object InvisibilizingItemFrameListener : Listener {
@@ -20,9 +20,17 @@ object InvisibilizingItemFrameListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onPlayerInteract(event: PlayerInteractEntityEvent){
         val player: Player = event.player
+        if (!player.isSneaking) return
 
-        if (!(player.isSneaking && event.hand == EquipmentSlot.HAND)) return
         val frame = event.rightClicked as? ItemFrame ?: return
+
+        when {
+            event.hand == OFF_HAND -> {
+                event.isCancelled = true
+                return
+            }
+            event.hand != HAND -> return
+        }
 
         if (frame.isInvisible) {
             frame.visibilize()
