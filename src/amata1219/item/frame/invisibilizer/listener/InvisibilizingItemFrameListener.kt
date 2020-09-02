@@ -1,9 +1,11 @@
 package amata1219.item.frame.invisibilizer.listener
 
 import amata1219.item.frame.invisibilizer.MainConfig
+import amata1219.item.frame.invisibilizer.extension.bukkit.actionbar
 import amata1219.item.frame.invisibilizer.extension.bukkit.invisibilize
 import amata1219.item.frame.invisibilizer.extension.bukkit.isInvisible
 import amata1219.item.frame.invisibilizer.extension.bukkit.visibilize
+import org.bukkit.ChatColor
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -34,8 +36,10 @@ object InvisibilizingItemFrameListener : Listener {
 
         if (frame.isInvisible) {
             frame.visibilize()
+            player.actionbar("${ChatColor.AQUA}クリックした額縁を透明化しました！")
         } else {
             frame.invisibilize()
+            player.actionbar("${ChatColor.AQUA}クリックした額縁を可視化しました！")
             val uuid = player.uniqueId
             if (!playersWhoHaveAlreadyFlaggedAboutTip4Highlighting.contains(uuid)) {
                 player.sendMessage(MainConfig.tip4HighlightingItemFrames)

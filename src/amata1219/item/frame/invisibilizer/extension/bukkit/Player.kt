@@ -2,6 +2,8 @@ package amata1219.item.frame.invisibilizer.extension.bukkit
 
 import amata1219.item.frame.invisibilizer.MainConfig
 import amata1219.item.frame.invisibilizer.reflection.MinecraftPackage.*
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -180,3 +182,5 @@ private fun Player.receive(packet: Any) {
             .field("playerConnection")
             .call("sendPacket", packet)
 }
+
+internal fun Player.actionbar(text: String) = spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent(text))

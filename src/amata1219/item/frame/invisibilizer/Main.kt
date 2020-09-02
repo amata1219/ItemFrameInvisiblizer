@@ -1,5 +1,6 @@
 package amata1219.item.frame.invisibilizer
 
+import amata1219.item.frame.invisibilizer.command.ConfigReloadCommand
 import amata1219.item.frame.invisibilizer.extension.bukkit.highlighters
 import amata1219.item.frame.invisibilizer.extension.bukkit.stopHighlightingItemFrames
 import amata1219.item.frame.invisibilizer.listener.HighlightingItemFrameListener
@@ -21,6 +22,12 @@ class Main : JavaPlugin(), Listener {
         INSTANCE = this
 
         saveDefaultConfig()
+
+        listOf(
+                "ifireload" to ConfigReloadCommand
+        ).forEach {
+            getCommand(it.first)?.setExecutor(it.second)
+        }
 
         listOf(
                 InvisibilizingItemFrameListener,

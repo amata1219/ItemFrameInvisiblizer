@@ -1,5 +1,10 @@
 name: ItemFrameInvisibilizer
 main: amata1219.item.frame.invisibilizer.Main
 version: 1.0.0
-api-version: 1.16
+api-version: "1.16"
 author: amata1219(Twitter@amata1219)
+
+commands:
+  ifireload:
+    permission: item.frame.invisibilizer.reload
+    permission-message: "You don't have <permission>!"
