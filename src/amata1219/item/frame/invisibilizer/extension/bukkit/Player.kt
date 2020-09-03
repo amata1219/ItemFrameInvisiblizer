@@ -23,7 +23,7 @@ private val basicMagmaCube4Highlighting: Any = Reflect.onClass("${NMS}.EntityMag
         Reflect.onClass("${NMS}.EntityTypes")
                 .field("MAGMA_CUBE")
                 .get(),
-        Reflect.on(Bukkit.getWorld("world"))
+        Reflect.on(Bukkit.getWorlds()[0]!!)
                 .call("getHandle")
                 .get()
 )
