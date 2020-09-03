@@ -61,12 +61,6 @@ internal fun createMagmaCube4Highlighting(world: World, loc: Location): Pair<Int
             ).get()
 }
 
-internal fun createEntityDestroyPacket(entityIds: IntArray): Any {
-    return Reflect.onClass("${NMS}.PacketPlayOutEntityDestroy")
-            .create(entityIds)
-            .get()
-}
-
 internal val Player.isHighlightingItemFrames: Boolean
     get() = highlighters2HighlightedItemFrames.contains(this)
 
@@ -89,7 +83,7 @@ internal fun Player.startHighlightingItemFrames() {
 
 internal fun Player.stopHighlightingItemFrames() {
     if (!isHighlightingItemFrames) return
-    highlighters2ActiveTasks.remove(this)!!.cancel()
+    highlighters2ActiveTasks.remove(this)?.cancel()
     unhighlightAllItemFrames()
     highlighters2HighlightedItemFrames.remove(this)
     receive(
@@ -103,6 +97,8 @@ internal fun Player.stopHighlightingItemFrames() {
 internal fun Player.highlightAll(vararg targets: ItemFrame) {
     val uniqueIds: List<String> = targets.mapNotNull(::highlight).map(UUID::toString)
 
+    if (uniqueIds.isEmpty()) return
+
     receive(
             Reflect.onClass("${NMS}.PacketPlayOutScoreboardTeam").create()
                     .set("a", nameOfTeam4Highlighting) //teamName = IFI:Xx12
@@ -114,7 +110,7 @@ internal fun Player.highlightAll(vararg targets: ItemFrame) {
 }
 
 private fun Player.highlight(target: ItemFrame): UUID? {
-    val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this]!!
+    val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this] ?: return null
     if (state.containsKey(target)) return null
 
     val loc: Location = target.attachedBlock.location.add(0.5, 0.0, 0.5)
@@ -152,17 +148,22 @@ internal fun Player.highlightItemFramesInArea() {
 }
 
 internal fun Player.unhighlight(vararg targets: ItemFrame) {
-    val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this]!!
+    val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this] ?: return
     val entityIds: IntArray = targets.mapNotNull {
         state.remove(it)
     }.toIntArray()
-    receive(createEntityDestroyPacket(entityIds))
+    if (entityIds.isEmpty()) return
+    receive(
+            Reflect.onClass("${NMS}.PacketPlayOutEntityDestroy")
+                    .create(entityIds)
+                    .get()
+    )
 }
 
 internal fun Player.unhighlightItemFramesOutOfArea() {
     val state: MutableMap<ItemFrame, Int> = highlighters2HighlightedItemFrames[this] ?: return
     val targets: Array<ItemFrame> = state.keys.filter {
-        it.location.distance(location) > MainConfig.radiusOfArea2HighlightItemFrames
+        it.world != world || it.location.distance(location) > MainConfig.radiusOfArea2HighlightItemFrames
     }.toTypedArray()
     if (targets.isNotEmpty()) unhighlight(*targets)
 }

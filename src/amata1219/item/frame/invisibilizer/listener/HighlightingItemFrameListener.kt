@@ -11,9 +11,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.hanging.HangingBreakEvent
 import org.bukkit.event.hanging.HangingPlaceEvent
-import org.bukkit.event.player.PlayerItemHeldEvent
-import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -58,11 +57,24 @@ object HighlightingItemFrameListener : Listener {
     private fun isItemFrame(item: ItemStack?) = item?.type == Material.ITEM_FRAME
 
     @EventHandler
+    fun on(event: InventoryClickEvent) {
+        val player: Player = event.whoClicked as? Player ?: return
+        if (!(event.clickedInventory == player.inventory && event.slot == 40)) return
+        val clickedItemType: Material = event.currentItem?.type ?: return
+        if (clickedItemType != Material.ITEM_FRAME) return
+        player.stopHighlightingItemFrames()
+    }
+
+    @EventHandler
+    fun on(event: PlayerChangedWorldEvent) = event.player.unhighlightAllItemFrames()
+
+    @EventHandler
     fun on(event: PlayerQuitEvent) = event.player.stopHighlightingItemFrames()
 
     @EventHandler
     fun on(event: HangingPlaceEvent) {
         val frame: ItemFrame = event.entity as? ItemFrame ?: return
+
         highlighters.filter {
             it.world == frame.world
         }.filter {
@@ -75,6 +87,7 @@ object HighlightingItemFrameListener : Listener {
     @EventHandler
     fun on(event: HangingBreakEvent) {
         val frame: ItemFrame = event.entity as? ItemFrame ?: return
+
         highlighters.forEach {
             it.unhighlight(frame)
         }
