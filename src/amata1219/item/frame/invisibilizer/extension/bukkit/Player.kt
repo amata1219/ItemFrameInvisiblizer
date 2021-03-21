@@ -143,6 +143,7 @@ internal fun Player.highlightItemFramesInArea() {
     val radius: Double = MainConfig.radiusOfArea2HighlightItemFrames
     val frames: Array<ItemFrame> = getNearbyEntities(radius, radius, radius)
             .filterIsInstance(ItemFrame::class.java)
+            .filter(ItemFrame::isInvisible)
             .toTypedArray()
     highlightAll(*frames)
 }
