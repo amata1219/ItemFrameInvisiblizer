@@ -2,7 +2,7 @@ package amata1219.item.frame.invisibilizer.extension.bukkit
 
 import org.bukkit.block.Block
 import org.bukkit.entity.ItemFrame
-import org.jooq.tools.reflect.Reflect
+import org.joor.Reflect
 
 val ItemFrame.isInvisible: Boolean
     get() = Reflect.on(this)

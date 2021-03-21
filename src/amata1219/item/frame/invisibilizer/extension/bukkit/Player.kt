@@ -10,7 +10,7 @@ import org.bukkit.World
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
-import org.jooq.tools.reflect.Reflect
+import org.joor.Reflect
 import java.util.*
 
 private val highlighters2HighlightedItemFrames: MutableMap<Player, MutableMap<ItemFrame, Int>> = mutableMapOf()
